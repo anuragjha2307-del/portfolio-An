@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { MenuBar } from '@/components/os/MenuBar';
-import { Dock } from '@/components/os/Dock';
+import { TopBar } from '@/components/os/TopBar';
+import { BottomDock } from '@/components/os/BottomDock';
 import { Desktop } from '@/components/os/Desktop';
 import { WindowContainer } from '@/components/os/WindowContainer';
 import { CommandPalette } from '@/components/os/CommandPalette';
@@ -99,10 +99,10 @@ export default function Home() {
       initial[id] = {
         id,
         title: def.title,
-        isOpen: id === 'projects', // Start with Projects Hub open
+        isOpen: false, // Default to clean neural workspace desktop
         isMinimized: false,
         isMaximized: false,
-        zIndex: id === 'projects' ? 10 : 1,
+        zIndex: 1,
         position: def.initialPosition,
         size: def.initialSize,
       };
@@ -110,7 +110,7 @@ export default function Home() {
     return initial as Record<AppId, WindowState>;
   });
 
-  const [activeAppId, setActiveAppId] = useState<AppId | null>('projects');
+  const [activeAppId, setActiveAppId] = useState<AppId | null>(null);
   const [topZIndex, setTopZIndex] = useState(15);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isMobileMode, setIsMobileMode] = useState<boolean>(false);
@@ -170,7 +170,6 @@ export default function Home() {
       },
     }));
     if (activeAppId === id) {
-      // Pick next open window if available
       const openRemaining = (Object.keys(windows) as AppId[]).filter(
         (k) => k !== id && windows[k].isOpen && !windows[k].isMinimized
       );
@@ -215,11 +214,14 @@ export default function Home() {
     }));
   };
 
+  const handleStartTour = () => {
+    sound.playClick();
+    window.dispatchEvent(new CustomEvent('start-anuragos-tour'));
+  };
+
   const openAppIds = (Object.keys(windows) as AppId[]).filter(
     (id) => windows[id].isOpen && !windows[id].isMinimized
   );
-
-  const activeWindowTitle = activeAppId ? windows[activeAppId]?.title : 'AnuragOS Desktop';
 
   // Responsive Mobile Mode (iOS / Android Springboard Bento Launcher)
   if (isMobileMode) {
@@ -233,21 +235,22 @@ export default function Home() {
   }
 
   return (
-    <main className="relative h-screen w-full bg-slate-950 font-sans overflow-hidden select-none">
-      {/* OS Top Menu Bar (Sticky at top) */}
-      <div className="sticky top-0 z-50">
-        <MenuBar
-          activeAppTitle={activeWindowTitle}
-          currentTheme={theme}
-          onThemeChange={(newTheme) => setTheme(newTheme)}
-          onOpenApp={handleOpenApp}
-          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-          onSwitchToMobile={() => setIsMobileMode(true)}
-        />
-      </div>
+    <main className="relative h-screen w-full bg-slate-950 font-sans overflow-hidden select-none flex flex-col justify-between">
+      {/* OS Top Bar: AnuragOS v3.0 | — Neural Workspace ● ONLINE | Clock | Start 60s Tour */}
+      <TopBar
+        currentTheme={theme}
+        onThemeChange={(newTheme) => setTheme(newTheme)}
+        onOpenApp={handleOpenApp}
+        onStartTour={handleStartTour}
+      />
 
-      {/* Interactive Desktop Canvas */}
-      <Desktop onOpenApp={handleOpenApp} onThemeChange={(newTheme) => setTheme(newTheme)} />
+      {/* Main Interactive Neural Workspace Desktop */}
+      <Desktop
+        onOpenApp={handleOpenApp}
+        onThemeChange={(newTheme) => setTheme(newTheme)}
+        activeAppId={activeAppId}
+        onStartTour={handleStartTour}
+      />
 
       {/* Window Manager Canvas */}
       {(Object.keys(windows) as AppId[]).map((id) => {
@@ -315,7 +318,12 @@ export default function Home() {
       })}
 
       {/* Bottom Floating Application Dock */}
-      <Dock openApps={openAppIds} activeAppId={activeAppId} onOpenApp={handleOpenApp} />
+      <BottomDock
+        openApps={openAppIds}
+        activeAppId={activeAppId}
+        onOpenApp={handleOpenApp}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+      />
 
       {/* Spotlight Command Palette (Ctrl+K) */}
       <CommandPalette

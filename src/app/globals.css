@@ -100,6 +100,82 @@ html, body {
   background-size: 32px 32px;
 }
 
+/* Futuristic Hologram & Neural Workspace styles */
+@keyframes spin-slow-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-slow-counter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes holo-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes holo-pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.35), inset 0 0 15px rgba(6, 182, 212, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(6, 182, 212, 0.55), inset 0 0 25px rgba(6, 182, 212, 0.3);
+  }
+}
+
+@keyframes holo-pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.35), inset 0 0 15px rgba(16, 185, 129, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(16, 185, 129, 0.55), inset 0 0 25px rgba(16, 185, 129, 0.3);
+  }
+}
+
+@keyframes holo-pulse-purple {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.35), inset 0 0 15px rgba(168, 85, 247, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(168, 85, 247, 0.55), inset 0 0 25px rgba(168, 85, 247, 0.3);
+  }
+}
+
+@keyframes scanline-vertical {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+.animate-spin-clockwise {
+  animation: spin-slow-clockwise 20s linear infinite;
+}
+
+.animate-spin-counter {
+  animation: spin-slow-counter 15s linear infinite;
+}
+
+.animate-holo-float {
+  animation: holo-float 5s ease-in-out infinite;
+}
+
+.animate-scanline {
+  animation: scanline-vertical 3s linear infinite;
+}
+
+.glow-cyan-card {
+  animation: holo-pulse-cyan 4s ease-in-out infinite;
+}
+
+.glow-green-card {
+  animation: holo-pulse-green 4s ease-in-out infinite;
+}
+
+.glow-purple-card {
+  animation: holo-pulse-purple 4s ease-in-out infinite;
+}
+
 /* Subtle pulse dot */
 @keyframes ping-slow {
   0% { transform: scale(1); opacity: 0.8; }
